@@ -1,41 +1,39 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { NotaSaidaDto } from './dto/nota.dto';
+import { NotaDto } from './dto/nota.dto';
 import { NotasService } from './notas.service';
 
+@ApiTags('Notas')
 @Controller('notas')
 export class NotasController {
   constructor(private readonly notasService: NotasService) {}
 
-  //end-point de saida de nota
   @Post('saida')
-  registrarSaida(@Body() notaSaidaDto : NotaSaidaDto) {
-    return this.notasService.registrarSaidaDeNota(notaSaidaDto);
+  @ApiOperation({ summary: 'Registrar Saida de Nota' })
+  registrarSaida(@Body() reqSaidaNota: NotaDto): Promise<NotaDto> {
+    this.notasService.verificarCaracteres(reqSaidaNota.id);
+    return this.notasService.registrarSaidaDeNota(reqSaidaNota);
   }
 
-  //end-point de retorno de nota
+  @Get('saida/:id')
+  @ApiOperation({summary:'Consultar se nota saiu para entrega'})
+  consultarSaida(@Param('id') id: string): Promise<NotaDto> {
+    this.notasService.verificarCaracteres(id);
+    return this.notasService.consultarSaidaNota(id);
+  }
+
   @Post('retorno')
-  registrarRetorno(@Body() notaSaidaDto : NotaSaidaDto) {
-    return this.notasService.registrarSaidaDeNota(notaSaidaDto);
+  @ApiOperation({summary:'Registrar Retorno de Nota'})
+  registrarRetorno(@Body() reqRetornoNota: NotaDto) {
+    this.notasService.verificarCaracteres(reqRetornoNota.id)
+    return this.notasService.registrarRetornoDeNota(reqRetornoNota);
   }
 
-  @Get(':id')
-  consultarNota(@Param('id') id: string) {
-    //verifica se o ID possui 11 digitos
-    if(id.length < 11){
-      throw new HttpException({
-        status: HttpStatus.BAD_REQUEST,
-        message:'o identificador deve conter 11 digitos'
-      },HttpStatus.BAD_REQUEST)
-    }
-    return this.notasService.consulta(id);
+  @Get('retorno/:id')
+  @ApiOperation({summary:'Consultar se nota retornou da entrega'})
+  consultarNota(@Param('id') id: string): Promise<any> {
+    this.notasService.verificarCaracteres(id);
+    return this.notasService.consultarRetornoNota(id);
   }
 }

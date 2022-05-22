@@ -1,5 +1,12 @@
-export class NotaSaidaDto {
+import { ApiProperty } from '@nestjs/swagger';
+
+export class NotaDto {
+  @ApiProperty()
   id: string;
-  dataSaida: string;
-  dataRetorno: string;
+  
+  @ApiProperty()
+  dataSaida: Date;
+  
+  @ApiProperty()
+  dataRetorno: Date;
 }

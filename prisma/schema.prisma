@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Nota {
-  dataRetorno String?
-  dataSaida   String
-  id          String    @id @db.Char(11)
+  dataRetorno DateTime?
+  dataSaida   DateTime?
+  id          String    @id
 }
