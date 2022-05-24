@@ -9,71 +9,85 @@ export class NotasService {
 
   async registrarSaidaDeNota(bodyRegistrarSaida: NotaDto): Promise<NotaDto> {
     const { id, dataSaida } = bodyRegistrarSaida;
-    const consultarExiste = await this.consultar(id)
-    console.log(consultarExiste)
-    if(Boolean(consultarExiste)){
-      throw new HttpException({
-        status:HttpStatus.CONFLICT,
-        message:'Nota já existe - saida'
-      },HttpStatus.CONFLICT)
+    const consultarExiste = await this.consultar(id);
+    if (Boolean(consultarExiste)) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: 'Nota já existe - saida',
+        },
+        HttpStatus.CONFLICT,
+      );
     }
     return this.prismaService.nota.create({
       data: {
         id,
-        dataSaida
+        dataSaida,
       },
     });
   }
 
- async consultarSaidaNota(id: string): Promise<NotaDto> {
-    const resolve = await this.consultar(id)
-    if(Boolean(resolve))
-    {
-      return resolve
-    }else{
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        message:'nota não encontrada - saida'
-      },HttpStatus.NOT_FOUND)
+  async consultarSaidaNota(id: string): Promise<NotaDto> {
+    const resolve = await this.consultar(id);
+    if (Boolean(resolve)) {
+      return resolve;
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'nota não encontrada - saida',
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
-    }
+  }
 
-  async registrarRetornoDeNota(bodyRegistrarRetorno: NotaDto): Promise<NotaModel> {
-    const { id,dataRetorno } = bodyRegistrarRetorno;
-    let consultarExiste = await this.consultar(id)
-    if(consultarExiste.dataRetorno){
-      throw new HttpException({
-        status:HttpStatus.CONFLICT,
-        message:'Nota já existe - retorno'
-      },HttpStatus.CONFLICT)
+  async registrarRetornoDeNota(
+    bodyRegistrarRetorno: NotaDto,
+  ): Promise<NotaModel> {
+    const { id, dataRetorno } = bodyRegistrarRetorno;
+    let consultarExiste = await this.consultar(id);
+    if (consultarExiste.dataRetorno) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: 'Nota já existe - retorno',
+        },
+        HttpStatus.CONFLICT,
+      );
     }
     return this.prismaService.nota.update({
       where: {
-        id
+        id,
       },
-      data:{
-        dataRetorno
-      }
+      data: {
+        dataRetorno,
+      },
     });
   }
 
   async consultarRetornoNota(id: string): Promise<any> {
-    const resolve = await this.consultar(id)
-    if(Boolean(resolve))
-    {
-      if(resolve.dataRetorno){
-        return resolve
-      }else{
-        throw new HttpException({
-          status: HttpStatus.EXPECTATION_FAILED,
-          message:'nota não possui retorno registrado'
-        },HttpStatus.EXPECTATION_FAILED)
+    const resolve = await this.consultar(id);
+    if (Boolean(resolve)) {
+      if (resolve.dataRetorno) {
+        return resolve;
+      } else {
+        throw new HttpException(
+          {
+            status: HttpStatus.EXPECTATION_FAILED,
+            message: 'nota não possui retorno registrado',
+          },
+          HttpStatus.EXPECTATION_FAILED,
+        );
       }
-    }else{
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        message:'nota não encontrada - retorno'
-      },HttpStatus.NOT_FOUND)
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'nota não encontrada - retorno',
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 
@@ -89,10 +103,8 @@ export class NotasService {
     }
   }
   consultar(id: string): Promise<NotaDto> {
-    return this.prismaService.nota.findUnique(
-      {
-        where:{ id }
-      }
-    )
+    return this.prismaService.nota.findUnique({
+      where: { id },
+    });
   }
 }
