@@ -7,8 +7,8 @@ import { NotaDto } from './dto/nota.dto';
 export class NotasService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async registrarSaidaDeNota(bodyRegistrarSaida: NotaDto): Promise<NotaDto> {
-    const { id, dataSaida } = bodyRegistrarSaida;
+  async registrarSaidaDeNota(BodySaidaServ: NotaDto): Promise<any> {
+    const { id, dataSaida = new Date() } = BodySaidaServ;
     const consultarExiste = await this.consultar(id);
     if (Boolean(consultarExiste)) {
       throw new HttpException(
@@ -45,17 +45,19 @@ export class NotasService {
   async registrarRetornoDeNota(
     bodyRegistrarRetorno: NotaDto,
   ): Promise<NotaModel> {
-    const { id, dataRetorno } = bodyRegistrarRetorno;
-    let consultarExiste = await this.consultar(id);
-    if (consultarExiste.dataRetorno) {
-      throw new HttpException(
-        {
-          status: HttpStatus.CONFLICT,
-          message: 'Nota já existe - retorno',
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
+    const { id, dataRetorno = new Date() } = bodyRegistrarRetorno;
+    const consultarExiste = await this.consultar(id);
+    if(!Boolean(consultarExiste)){
+      throw new HttpException({status:HttpStatus.NOT_FOUND,message:'não existe nota de saida registrada'},HttpStatus.NOT_FOUND)
+    }else if (consultarExiste.dataRetorno) {
+        throw new HttpException(
+          {
+            status: HttpStatus.CONFLICT,
+            message: 'Nota já existe - retorno',
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
     return this.prismaService.nota.update({
       where: {
         id,
@@ -102,7 +104,7 @@ export class NotasService {
       );
     }
   }
-  consultar(id: string): Promise<NotaDto> {
+  consultar(id: string) {
     return this.prismaService.nota.findUnique({
       where: { id },
     });

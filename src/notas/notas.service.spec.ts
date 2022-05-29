@@ -4,7 +4,7 @@ import { NotasService } from './notas.service';
 
 describe('NotasService', () => {
   let service: NotasService;
-  let numeroNota = '1234'.concat('abd'.repeat(10));
+  const numeroNota = '1234'.concat('abd'.repeat(10));
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [PrismaService, NotasService],

@@ -12,9 +12,9 @@ export class NotasController {
 
   @Post('saida')
   @ApiOperation({ summary: 'Registrar Saida de Nota' })
-  registrarSaida(@Body() reqSaidaNota: NotaDto): Promise<any> {
-    this.notasService.verificarCaracteres(reqSaidaNota.id);
-    return this.notasService.registrarSaidaDeNota(reqSaidaNota);
+  registrarSaida(@Body() reqBodySaida: NotaDto): Promise<any> {
+    this.notasService.verificarCaracteres(reqBodySaida.id);
+    return this.notasService.registrarSaidaDeNota(reqBodySaida);
   }
 
   @Get('saida/:id')
